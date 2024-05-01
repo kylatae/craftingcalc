@@ -78,12 +78,13 @@ function renderRecipeTree(tree, parentElement) {
     parentElement.appendChild(itemHeader);
  
     const ingredientList = document.createElement('ul');
-    tree.ingredients.forEach(ingredient, i => {
+    tree.ingredients.forEach(ingredient => {
         const listItem = document.createElement('li');
         listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
         
-        listItem.querySelector('li').style.zIndex = 0+i;
-        listItem.addEventListener('mouseover', () => showTooltip(ingredient.name));
+        listItem.addEventListener('mouseover', (event) => {
+            event.stopPropagation();
+            showTooltip(ingredient.name)});
         listItem.addEventListener('mouseout', hideTooltip);
         
         ingredientList.appendChild(listItem);
