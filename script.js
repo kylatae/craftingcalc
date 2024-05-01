@@ -43,6 +43,17 @@ function displayRecipe() {
     // Build the recipe tree recursively
     const recipeTree = buildRecipeTree(selectedItemName);
     renderRecipeTree(recipeTree, recipeDetails);
+
+    ingredientList.forEach((ingredient, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${ingredient} x${selectedItem.Recipe[index + 1]}`;
+    
+        // Add tooltip functionality (after the element is created and content is added)
+        listItem.addEventListener('mouseover', () => showTooltip(ingredient)); 
+        listItem.addEventListener('mouseout', hideTooltip);
+    
+        ingredientList.appendChild(listItem);
+    });
 }
 
 function buildRecipeTree(itemName) {
@@ -82,9 +93,6 @@ function renderRecipeTree(tree, parentElement) {
         const listItem = document.createElement('li');
         listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
         
-        listItem.addEventListener('mouseover', () => showTooltip(ingredient.name));
-        listItem.addEventListener('mouseout', hideTooltip);
-
         ingredientList.appendChild(listItem);
 
         if (ingredient.tree) { // Render sub-ingredients recursively
