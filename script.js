@@ -81,9 +81,6 @@ function renderRecipeTree(tree, parentElement) {
     tree.ingredients.forEach(ingredient => {
         const listItem = document.createElement('li');
         listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
-
-        listItem.removeEventListener('mouseover')
-        listItem.removeEventListener('mouseout')
         
         listItem.addEventListener('mouseover', () => showTooltip(ingredient.name));
         listItem.addEventListener('mouseout', hideTooltip);
