@@ -11,7 +11,6 @@ fetch('./items.json')
 // Data storage
 let craftingItems = []; 
 let itemData = {};
-console.log(craftingItems)
 // Function to populate the select dropdown
 function populateCraftableList(items) {
     craftingItems = items; // Store craftable items data 
@@ -38,36 +37,64 @@ function storeAllItems(items) {
 // Display the recipe
 function displayRecipe() {
     const selectedItemName = document.getElementById('craftable-items').value;
-    const selectedItem = craftingItems.find(item => item.Name === selectedItemName);
-
     const recipeDetails = document.getElementById('recipe-details');
     recipeDetails.innerHTML = ''; // Clear previous recipe
 
-    // Recipe Header
-    const recipeHeader = document.createElement('h2');
-    recipeHeader.textContent = `Craft ${selectedItem.Name}`;
-    recipeDetails.appendChild(recipeHeader);
+    // Build the recipe tree recursively
+    const recipeTree = buildRecipeTree(selectedItemName);
+    renderRecipeTree(recipeTree, recipeDetails);
+}
 
-    // Ingredient List
+function buildRecipeTree(itemName) {
+    const recipe = craftingItems.find(item => item.Name === itemName);
+
+    if (!recipe) return null; // Item is not craftable
+
+    const tree = {
+        name: itemName,
+        workbench: recipe.Workbench[0],
+        ingredients: []
+    };
+
+    for (let i = 0; i < recipe.Recipe.length; i += 2) {
+        const ingredientName = recipe.Recipe[i];
+        const quantity = recipe.Recipe[i + 1];
+
+        const ingredientTree = buildRecipeTree(ingredientName); // Recursion!
+
+        tree.ingredients.push({
+            name: ingredientName,
+            quantity: quantity,
+            tree: ingredientTree // Store the subtree 
+        });
+    }
+
+    return tree;
+}
+
+function renderRecipeTree(tree, parentElement) {
+    const itemHeader = document.createElement('h2');
+    itemHeader.textContent = `Craft ${tree.name}`;
+    parentElement.appendChild(itemHeader);
+
+    if (tree.workbench !== 'Self') {
+        const workbench = document.createElement('p');
+        workbench.textContent = tree.workbench;
+        parentElement.appendChild(workbench);
+    }
+
     const ingredientList = document.createElement('ul');
-    selectedItem.Recipe.forEach((ingredient, index) => {
-        if (index % 2 === 0) { // Even indices are ingredient names
-            const listItem = document.createElement('li');
-            listItem.textContent = `${ingredient} x${selectedItem.Recipe[index + 1]}`;
+    tree.ingredients.forEach(ingredient => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
+        ingredientList.appendChild(listItem);
 
-            // Add tooltip functionality
-            listItem.addEventListener('mouseover', () => showTooltip(ingredient));
-            listItem.addEventListener('mouseout', hideTooltip);
-
-            ingredientList.appendChild(listItem);
+        if (ingredient.tree) { // Render sub-ingredients recursively
+            renderRecipeTree(ingredient.tree, listItem);
         }
     });
-    recipeDetails.appendChild(ingredientList);
 
-    // Workbench
-    const workbench = document.createElement('p');
-    workbench.textContent = selectedItem.Workbench[0]; 
-    recipeDetails.appendChild(workbench);
+    parentElement.appendChild(ingredientList);
 }
 
 function showTooltip(ingredientName) {
