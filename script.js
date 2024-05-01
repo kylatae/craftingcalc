@@ -87,6 +87,10 @@ function renderRecipeTree(tree, parentElement) {
     tree.ingredients.forEach(ingredient => {
         const listItem = document.createElement('li');
         listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
+ 
+        listItem.addEventListener('mouseover', () => showTooltip(ingredient));
+        listItem.addEventListener('mouseout', hideTooltip);
+        
         ingredientList.appendChild(listItem);
 
         if (ingredient.tree) { // Render sub-ingredients recursively
