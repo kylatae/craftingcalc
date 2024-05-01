@@ -76,27 +76,27 @@ function renderRecipeTree(tree, parentElement) {
     const itemHeader = document.createElement('h2');
     itemHeader.textContent = `Craft ${tree.name}`;
     parentElement.appendChild(itemHeader);
-
-    if (tree.workbench !== 'Self') {
-        const workbench = document.createElement('p');
-        workbench.textContent = tree.workbench;
-        parentElement.appendChild(workbench);
-    }
-
+ 
     const ingredientList = document.createElement('ul');
     tree.ingredients.forEach(ingredient => {
         const listItem = document.createElement('li');
         listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
- 
-        listItem.addEventListener('mouseover', () => showTooltip(ingredient));
+
+        listItem.addEventListener('mouseover', () => showTooltip(ingredient.name));
         listItem.addEventListener('mouseout', hideTooltip);
-        
+
         ingredientList.appendChild(listItem);
 
         if (ingredient.tree) { // Render sub-ingredients recursively
             renderRecipeTree(ingredient.tree, listItem);
         }
     });
+
+    if (tree.workbench !== 'Self') {
+        const workbench = document.createElement('p');
+        workbench.textContent = tree.workbench;
+        parentElement.appendChild(workbench);
+    }
 
     parentElement.appendChild(ingredientList);
 }
