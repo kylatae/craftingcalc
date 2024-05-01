@@ -12,11 +12,3 @@ body {
   box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 
-.recipe-container .tooltip { /* Use a more specific selector if needed */
-  /* ... other styles ... */
-  visibility: hidden; /* Initially hidden */
-}
-
-.recipe-container li:hover .tooltip {
-  visibility: visible; /* Visible on hover */
-}

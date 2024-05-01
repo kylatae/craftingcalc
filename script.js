@@ -43,17 +43,6 @@ function displayRecipe() {
     // Build the recipe tree recursively
     const recipeTree = buildRecipeTree(selectedItemName);
     renderRecipeTree(recipeTree, recipeDetails);
-
-    ingredientList.forEach((ingredient, index) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${ingredient} x${selectedItem.Recipe[index + 1]}`;
-    
-        // Add tooltip functionality (after the element is created and content is added)
-        listItem.addEventListener('mouseover', () => showTooltip(ingredient)); 
-        listItem.addEventListener('mouseout', hideTooltip);
-    
-        ingredientList.appendChild(listItem);
-    });
 }
 
 function buildRecipeTree(itemName) {
@@ -63,8 +52,8 @@ function buildRecipeTree(itemName) {
 
     const tree = {
         name: itemName,
-        workbench: recipe.Workbench[0],
-        ingredients: []
+        ingredients: [],
+        workbench: recipe.Workbench[0]
     };
 
     for (let i = 0; i < recipe.Recipe.length; i += 2) {
@@ -89,9 +78,13 @@ function renderRecipeTree(tree, parentElement) {
     parentElement.appendChild(itemHeader);
  
     const ingredientList = document.createElement('ul');
-    tree.ingredients.forEach(ingredient => {
+    tree.ingredients.forEach(ingredient, i => {
         const listItem = document.createElement('li');
         listItem.textContent = `${ingredient.name} x${ingredient.quantity}`;
+        
+        listItem.querySelector('li').style.zIndex = 0+i;
+        listItem.addEventListener('mouseover', () => showTooltip(ingredient.name));
+        listItem.addEventListener('mouseout', hideTooltip);
         
         ingredientList.appendChild(listItem);
 
